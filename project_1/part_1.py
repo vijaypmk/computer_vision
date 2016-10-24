@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import pdb
 from matplotlib import pyplot as plt
+from  math import log
 
 def linear_brightness():
     '''
@@ -85,16 +86,16 @@ def linear_brightness():
 
     print(all_img)
     #pdb.set_trace()
-    plt.plot(X, all_img)
+    #plt.plot(X, all_img)
+    #plt.show()
+
+    log_all_img = [log(aimg1,10),log(aimg2,10),log(aimg3,10),log(aimg4,10),log(aimg5,10), log(aimg6,10), log(aimg7,10), log(aimg8,10)]
+
+    log_X = [log(1.0/350.0,10),log(1.0/250.0,10),log(1.0/180.0,10),log(1.0/125.0,10),log(1.0/90.0,10),log(1.0/60.0,10),log(1.0/45.0,10),log(1.0/30.0,10)]
+ 
+    plt.plot(log_X,log_all_img)
     plt.show()
-
-    #cv2.namedWindow('image', cv2.WINDOW_NORMAL)
-    #cv2.namedWindow('image1', cv2.WINDOW_NORMAL)
-    #cv2.imshow('image1', img1)
-    #cv2.imshow('image', nimg1)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
-
+    cv2.waitKey(0)
 def main():
     linear_brightness()
 
