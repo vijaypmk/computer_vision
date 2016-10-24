@@ -89,7 +89,7 @@ def linear_brightness():
     #plt.plot(X, all_img)
     #plt.show()
 
-    log_all_img = [log(aimg1 ,10), log(aimg2, 10), log(aimg3, 10), log(aimg4, 10), log(aimg5, 10), log(aimg6, 10), log(aimg7,10), log(aimg8,10)]
+    log_all_img = [log(aimg1 ,10), log(aimg2, 10), log(aimg3, 10), log(aimg4, 10), log(aimg5, 10), log(aimg6, 10), log(aimg7, 10), log(aimg8, 10)]
 
     log_X = [log(1.0/350.0, 10), log(1.0/250.0, 10), log(1.0/180.0, 10), log(1.0/125.0, 10), log(1.0/90.0, 10), log(1.0/60.0, 10), log(1.0/45.0, 10),log(1.0/30.0, 10)]
  
@@ -98,7 +98,6 @@ def linear_brightness():
     plt.ylabel('lagarithm of brightness')
     plt.show()
     cv2.waitKey(0)
-
 
 def main():
     linear_brightness()
