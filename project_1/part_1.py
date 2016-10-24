@@ -98,7 +98,7 @@ def linear_brightness():
         num_r = 0
         den1_r = 0
         den2_r = 0
-        for i in range(8):
+        for i in range(len(x)):
             num_r = num_r + ((x[i] - x_bar)*(y[i] - y_bar))
             den1_r = den1_r + ((x[i] - x_bar) ** 2)
             den2_r = den2_r + ((y[i] - y_bar) ** 2)
