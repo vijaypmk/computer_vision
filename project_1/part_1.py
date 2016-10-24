@@ -95,9 +95,8 @@ def linear_brightness():
  
     plt.plot(log_X, log_all_img)
     plt.xlabel('logarithm of exposure time')
-    plt.ylabel('lagarithm of brightness')
+    plt.ylabel('logarithm of brightness')
     plt.show()
-    cv2.waitKey(0)
 
 def main():
     linear_brightness()
