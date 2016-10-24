@@ -98,6 +98,8 @@ def linear_brightness():
     plt.ylabel('lagarithm of brightness')
     plt.show()
     cv2.waitKey(0)
+
+
 def main():
     linear_brightness()
 
