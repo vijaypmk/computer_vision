@@ -2,11 +2,10 @@ import numpy as np
 import cv2
 import pdb
 from matplotlib import pyplot as plt
-from  math import log
 
 def linear_brightness():
     '''
-    Reads the images and computes brightness
+    Reads the images and computes brightness by linear regression
     Args: None
     Return: None
     '''
@@ -39,12 +38,12 @@ def linear_brightness():
         Return: averaged float value
         '''
         rows, columns, channel = a_img.shape
-        sum = 0.0
+        total_sum = 0.0
         # 0 - blue, 1 - green, 2 - red
         for i in range(rows):
             for j in range(columns):
-                sum = sum + a_img[i,j,1]
-        return(sum/(a_img.size))
+                total_sum = total_sum + a_img[i,j,1]
+        return(total_sum/(a_img.size))
 
     # image 1
     nimg1 = img_crop(img1)
@@ -78,24 +77,58 @@ def linear_brightness():
     nimg8 = img_crop(img8)
     aimg8 = img_avg(nimg8)
 
-    #print(aimg1)
-
     # x and y axis
-    all_img = [aimg1, aimg2, aimg3, aimg4, aimg5, aimg6, aimg7, aimg8]
-    X = [1.0/350.0, 1.0/250.0, 1.0/180.0, 1.0/125.0, 1.0/90.0, 1.0/60.0, 1.0/45.0, 1.0/30.0]
+    B = [aimg1, aimg2, aimg3, aimg4, aimg5, aimg6, aimg7, aimg8]
+    T = [1.0/350.0, 1.0/250.0, 1.0/180.0, 1.0/125.0, 1.0/90.0, 1.0/60.0, 1.0/45.0, 1.0/30.0]
 
-    print(all_img)
-    #pdb.set_trace()
-    #plt.plot(X, all_img)
-    #plt.show()
+    # logs
+    log_B = np.log10(B)
+    log_T = np.log10(T)
 
-    log_all_img = [log(aimg1 ,10), log(aimg2, 10), log(aimg3, 10), log(aimg4, 10), log(aimg5, 10), log(aimg6, 10), log(aimg7, 10), log(aimg8, 10)]
+    # mean
+    mean_log_B = (np.sum(log_B))/float(len(log_B))
+    mean_log_T = (np.sum(log_T))/float(len(log_T))
 
-    log_X = [log(1.0/350.0, 10), log(1.0/250.0, 10), log(1.0/180.0, 10), log(1.0/125.0, 10), log(1.0/90.0, 10), log(1.0/60.0, 10), log(1.0/45.0, 10),log(1.0/30.0, 10)]
- 
-    plt.plot(log_X, log_all_img)
-    plt.xlabel('logarithm of exposure time')
-    plt.ylabel('logarithm of brightness')
+    def linear_regression(x, y, x_bar, y_bar):
+        '''
+        Returns the linearized Y axis values
+        Args: All logarithmic values of B, T and their means
+        Return: Least squares estimate of B
+        '''
+        num_r = 0
+        den1_r = 0
+        den2_r = 0
+        for i in range(len(x)):
+            num_r = num_r + ((x[i] - x_bar)*(y[i] - y_bar))
+            den1_r = den1_r + ((x[i] - x_bar) ** 2)
+            den2_r = den2_r + ((y[i] - y_bar) ** 2)
+
+        den3_r = (den1_r * den2_r) ** (0.5)
+
+        # pearson's coefficient
+        r = num_r/den3_r
+
+        # standard deviation
+        sx = (den1_r/ float(len(x) - 1)) ** (0.5)
+        sy = (den2_r/ float(len(y) - 1)) ** (0.5)
+
+        # slope
+        b1 = r*(sy/sx)
+
+        # intercept
+        log_k = y_bar - b1*x_bar
+
+        return(log_k + (b1)*log_T)
+
+    # linear regression on log_B
+    linearized_log_B = linear_regression(log_T, log_B, mean_log_T, mean_log_B)
+
+    # plotting
+    plt.plot(log_T, linearized_log_B)
+    plt.plot(log_T, log_B)
+    plt.scatter(mean_log_T, mean_log_B)
+    plt.xlabel('Logarithm of Exposure Time')
+    plt.ylabel('Logarithm of Brightness')
     plt.show()
 
 def main():
