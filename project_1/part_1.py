@@ -46,7 +46,7 @@ def linear_brightness():
                 total_sum = total_sum + a_img[i, j, color_channel]
         return(total_sum/(a_img.size))
 
-    #assign color channel value
+    # assign color channel value
     '''
     Blue=0
     green=1
@@ -132,18 +132,18 @@ def linear_brightness():
     # linear regression on log_B
     linearized_log_B, g_inv = linear_regression(log_T, log_B, mean_log_T, mean_log_B)
 
-    #linearized B
+    # linearized B
     linearized_B = 10**(linearized_log_B)
 
     # plotting
 
     plt.plot(log_T, linearized_log_B, label ='linearized estimate')
-    #plt.plot(log_T, log_B, label = 'observed brightness')
-    #plt.plot(T, linearized_B**(g_inv))
-    #plt.scatter(mean_log_T, mean_log_B))
+    # plt.plot(log_T, log_B, label = 'observed brightness')
+    # plt.plot(T, linearized_B**(g_inv))
+    # plt.scatter(mean_log_T, mean_log_B))
     plt.xlabel('Logarithm of Exposure Time')
     plt.ylabel('Linearized value of logarithm of Brightness')
-    plt.savefig('log T vs linearized log B for blue channel')
+    plt.savefig('log_T_vs_linearized_log_B_for_blue_channel')
     plt.show()
 
 def main():
