@@ -29,7 +29,8 @@ class project:
         for i in range(rows):
             for j in range(columns):
                 total_sum = total_sum + a_img[i, j, color_channel]
-        return(total_sum/(a_img.size))
+
+        return(total_sum/(rows*columns))
 
     def part_1_init(self, color_channel):
         '''
@@ -37,14 +38,14 @@ class project:
         Args: None
         Return: Brightness (B), Exposure time (T), log B, logT, mean B, mean T
         '''
-        img1 = cv2.imread('IMG_1_350.JPG')
-        img2 = cv2.imread('IMG_2_250.JPG')
-        img3 = cv2.imread('IMG_3_180.JPG')
-        img4 = cv2.imread('IMG_4_125.JPG')
-        img5 = cv2.imread('IMG_5_90.JPG')
-        img6 = cv2.imread('IMG_6_60.JPG')
-        img7 = cv2.imread('IMG_7_45.JPG')
-        img8 = cv2.imread('IMG_8_30.JPG')
+        img1 = cv2.imread('WP_350.JPG')
+        img2 = cv2.imread('WP_250.JPG')
+        img3 = cv2.imread('WP_180.JPG')
+        img4 = cv2.imread('WP_125.JPG')
+        img5 = cv2.imread('WP_90.JPG')
+        img6 = cv2.imread('WP_60.JPG')
+        img7 = cv2.imread('WP_45.JPG')
+        img8 = cv2.imread('WP_30.JPG')
 
         # image 1
         nimg1 = self.img_crop(img1)
@@ -92,6 +93,52 @@ class project:
 
         return(B, T, log_B, log_T, mean_log_B, mean_log_T)
 
+    def linearize_image(image, color_channel)
+        '''
+        Stores the computed value in the image
+        Arguements: Image
+        Return: Image
+        '''
+        B = self.part_2.init()
+        avg = [self.img_avg(B[0], color_channel), self.img_avg(B[1], color_channel), self.img_avg(B[2], color_channel)]
+        time = [1/1000, 1/500, 1/250]
+        log_avg = np.log(avg)
+        log_time = np.log(time)
+        mean_log_avg = (np.sum(log_avg))/float(len(log_avg))
+        mean_log_time = (np.sum(log_time))/float(len(log_time))
+
+
+    def part_2_init(self, color_channel):
+        '''
+        Reads the different images
+        Arguements: None
+        Return: Image array
+        '''
+        #image 1/1000s
+        img_1 = cv2.imread('1000s.jpg')
+
+        #image 1/500s
+        img_2 = cv2.imread('500s.jpg')
+
+        #image 1/250s
+        img_3 = cv2.imread('250s.jpg')
+
+        B = [img_1, img_2, img_3]
+
+        return B
+
+    def part_2(self):
+        '''
+        Performslinearization
+        Arguements: None
+        Return: Image Array
+        '''
+        B = self.part_2_init()
+
+        print(B[1][10,10,1])
+
+        return(B[1][10,10,1])
+
     def linear_regression(self, x, y, x_bar, y_bar):
         '''
         Returns the linearized Y axis values
@@ -133,10 +180,11 @@ class project:
         linearized_B = 10**(linearized_log_B)
 
     # plotting
-        plt.plot(log_T, linearized_log_B, label ='linearized estimate')
-        # plt.plot(log_T, log_B, label = 'observed brightness')
-        # plt.plot(T, linearized_B**(g_inv))
-        # plt.scatter(mean_log_T, mean_log_B))
+        #plt.plot(log_T, linearized_log_B, label ='linearized estimate')
+        #plt.plot(log_T, log_B, label = 'observed brightness')
+        plt.plot(T, linearized_B**(1/g_inv))
+        #plt.scatter(mean_log_T, mean_log_B))
+        #plt.plot(T, B)
         plt.xlabel('Logarithm of Exposure Time')
         plt.ylabel('Linearized value of logarithm of Brightness')
         plt.savefig('log_T_vs_linearized_log_B_for_blue_channel')
