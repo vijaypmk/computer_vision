@@ -295,7 +295,7 @@ class project:
         Arguements: Image
         Return: Image
         '''
-        tonemap1 = cv2.createTonemapDurand(gamma =2.2)
+        tonemap1 = cv2.createTonemapDrago(gamma =2.2)
         result = tonemap1.process(image)
 
         return result
@@ -305,7 +305,7 @@ class project:
 def main():
     p = project()
     pic1 = p.part_3()
-    #pic = p.part_4(pic1)
+    pic = p.part_4(pic1)
     '''
     cv2.namedWindow('Final_Image_1', cv2.WINDOW_NORMAL)
     cv2.imshow('Final_Image_1', image[0])
@@ -315,7 +315,7 @@ def main():
     cv2.imshow('image_500', image[1])
     '''
     cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
-    cv2.imshow('Final_image_2', pic1)
+    cv2.imshow('Final_image_2', pic)
 
     cv2.waitKey(0)
 
