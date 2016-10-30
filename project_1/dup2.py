@@ -296,7 +296,6 @@ def main():
     algorithm = 1
     pic1 = p.part_3(algorithm)
     pic = p.part_4(pic1)
-    pic =np.uint(pic)
    '''
     cv2.namedWindow('Final_Image_1', cv2.WINDOW_NORMAL)
     cv2.imshow('Final_Image_1', image[0])
