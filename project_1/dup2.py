@@ -143,8 +143,8 @@ class project:
         '''
         C, a_1, a_1 = self.conversion()
         C = self.linearize_image(C, 2)
-        C2 = self.linearize_image(C1, 1)
-        C3 = self.linearize_image(C2, 0)
+        C = self.linearize_image(C, 1)
+        C = self.linearize_image(C, 0)
         return(C)
 
     def conversion(self):
@@ -235,7 +235,7 @@ class project:
 
             return(D[0])
 
-        elif(arg==2)
+        elif(arg==2):
             #Algorithm_2
             E = self.part_2()
             F, a_1, a_2 = self.conversion()
@@ -254,7 +254,7 @@ class project:
 
             return(F[0])
 
-        elif(arg==3)
+        elif(arg==3):
             #pdb.set_trace()
             #Algorithm_3
             L = self.part_2_init()
@@ -296,7 +296,7 @@ def main():
     algorithm = 1
     pic1 = p.part_3(algorithm)
     pic = p.part_4(pic1)
-   '''
+    '''
     cv2.namedWindow('Final_Image_1', cv2.WINDOW_NORMAL)
     cv2.imshow('Final_Image_1', image[0])
     cv2.namedWindow('image_250', cv2.WINDOW_NORMAL)
