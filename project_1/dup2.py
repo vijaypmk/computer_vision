@@ -96,7 +96,7 @@ class project:
     #Global image array to linearize
     #C = self.part_2_init()
 
-    def linearize_image(self,C):
+    def linearize_image(self,C, color_channel):
         '''
         Stores the computed value in the image
         Arguements: Color channel
@@ -110,7 +110,7 @@ class project:
         mean_log_avg = (np.sum(log_avg))/float(len(log_avg))
         mean_log_time = (np.sum(log_time))/float(len(log_time))
         linearized_log_avg , g1_inv = self.linear_regression(log_time, log_avg, mean_log_time, mean_log_avg)
-        C[:][:,:, :] = C[:][:,:,:]**(1.0/g1_inv)
+        C[:][:,:, color_channel] = C[:][:,:,color_channel]**(1.0/g1_inv)
         #C[1][:,:, color_channel] = C[1][:,:, color_channel]**(1/g1_inv)
         #C[2][:,:, color_channel] = C[2][:,:, color_channel]**(1/g1_inv)
         return(C)
@@ -142,9 +142,9 @@ class project:
         Return: Image Array
         '''
         C, a_1, a_1 = self.conversion()
-        C = self.linearize_image(C)
-        #C2 = self.linearize_image(C1, 1)
-        #C3 = self.linearize_image(C2, 0)
+        C = self.linearize_image(C, 2)
+        C2 = self.linearize_image(C1, 1)
+        C3 = self.linearize_image(C2, 0)
         return(C)
 
     def conversion(self):
