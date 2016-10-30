@@ -110,7 +110,7 @@ class project:
         mean_log_avg = (np.sum(log_avg))/float(len(log_avg))
         mean_log_time = (np.sum(log_time))/float(len(log_time))
         linearized_log_avg , g1_inv = self.linear_regression(log_time, log_avg, mean_log_time, mean_log_avg)
-        C[:][:,:, :] = C[:][:,:,:]**(1/g1_inv)
+        C[:][:,:, :] = C[:][:,:,:]**(1.0/g1_inv)
         #C[1][:,:, color_channel] = C[1][:,:, color_channel]**(1/g1_inv)
         #C[2][:,:, color_channel] = C[2][:,:, color_channel]**(1/g1_inv)
         return(C)
@@ -296,7 +296,8 @@ def main():
     algorithm = 1
     pic1 = p.part_3(algorithm)
     pic = p.part_4(pic1)
-    '''
+    pic =np.uint(pic)
+   '''
     cv2.namedWindow('Final_Image_1', cv2.WINDOW_NORMAL)
     cv2.imshow('Final_Image_1', image[0])
     cv2.namedWindow('image_250', cv2.WINDOW_NORMAL)
