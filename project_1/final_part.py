@@ -198,15 +198,24 @@ class project:
         linearized_B = 10**(linearized_log_B)
 
         # plotting
-        #plt.plot(log_T, linearized_log_B, label ='linearized estimate')
-        #plt.plot(log_T, log_B, label = 'observed brightness')
-        #plt.plot(T, linearized_B**(1/g_inv))
+        choice = input('which plot would you like to view(1,2,3)?')
+        if(choice ==1):
+            plt.plot(log_T, linearized_log_B, label ='linearized estimate')
+            plt.plot(log_T, log_B, label = 'observed brightness')
+            plt.xlabel('Logarithm of Exposure Time')
+            plt.ylabel('Linearized value of logarithm of Brightness, Logarithm of brightness')
+            plt.show()
+        elif(choice==2)
+            plt.plot(T, linearized_B**(1/g_inv))
+            plt.xlabel('Logarithm of Exposure Time')
+            plt.ylabel('Linearized value of Brightness')
+            plt.show()
         #plt.scatter(mean_log_T, mean_log_B))
-        #plt.plot(T, B)
-        plt.xlabel('Logarithm of Exposure Time')
-        plt.ylabel('Linearized value of logarithm of Brightness')
-        #plt.savefig('log_T_vs_linearized_log_B_for_blue_channel')
-        plt.show()
+        elif(choice==3):
+            plt.plot(T, B)
+            plt.xlabel('Exposure Time')
+            plt.ylabel('Brightness')
+            plt.show()
 
     def part_3(self, arg):
         '''
