@@ -3,6 +3,7 @@ import cv2
 import pdb
 from matplotlib import pyplot as plt
 import pdb
+import click
 
 class project:
 
@@ -111,8 +112,7 @@ class project:
         mean_log_time = (np.sum(log_time))/float(len(log_time))
         linearized_log_avg , g1_inv = self.linear_regression(log_time, log_avg, mean_log_time, mean_log_avg)
         C[:][:,:, color_channel] = C[:][:,:,color_channel]**(1.0/g1_inv)
-        #C[1][:,:, color_channel] = C[1][:,:, color_channel]**(1/g1_inv)
-        #C[2][:,:, color_channel] = C[2][:,:, color_channel]**(1/g1_inv)
+
         return(C)
 
     def part_2_init(self):
@@ -132,19 +132,24 @@ class project:
 
         B = [img_1, img_2, img_3]
 
-        return B
+        return(B)
 
 
     def part_2(self):
         '''
-        Performslinearization
+        Performs linearization
         Arguements: None
         Return: Image Array
         '''
-        C, a_1, a_1 = self.conversion()
+        for i in range(3):
+            C[i] = np.float32(C[i])
+
         C = self.linearize_image(C, 2)
         C = self.linearize_image(C, 1)
         C = self.linearize_image(C, 0)
+
+        C, a_1, a_1 = self.conversion()
+
         return(C)
 
     def conversion(self):
@@ -154,8 +159,8 @@ class project:
         Return: Image Array
         '''
         D = self.part_2_init()
-        a_1 =2
-        a_2 =4
+        a_1 = 2
+        a_2 = 4
         for i in range(3):
             D[i] = np.float32(D[i])
         D[1][:,:,:] = D[1][:,:,:]/a_1
@@ -196,13 +201,13 @@ class project:
     def part_1(self, color_channel):
         B, T, log_B, log_T, mean_log_B, mean_log_T = self.part_1_init(color_channel)
 
-    # linear regression on log_B
+        # linear regression on log_B
         linearized_log_B, g_inv = self.linear_regression(log_T, log_B, mean_log_T, mean_log_B)
 
-    # linearized B
+        # linearized B
         linearized_B = 10**(linearized_log_B)
 
-    # plotting
+        # plotting
         #plt.plot(log_T, linearized_log_B, label ='linearized estimate')
         #plt.plot(log_T, log_B, label = 'observed brightness')
         #plt.plot(T, linearized_B**(1/g_inv))
@@ -212,8 +217,6 @@ class project:
         plt.ylabel('Linearized value of logarithm of Brightness')
         #plt.savefig('log_T_vs_linearized_log_B_for_blue_channel')
         plt.show()
-
-        return
 
     def part_3(self, arg):
         '''
@@ -225,7 +228,7 @@ class project:
             #Algorithm_1
             D, a_1, a_2 = self.conversion()
             G = self.part_2_init()
-            rows, columns, channels =D[0].shape
+            rows, columns, channels = D[0].shape
             for i in range(rows):
                 for j in range(columns):
                     if(G[2][i,j,0]<255 and G[2][i,j,1]<255 and G[2][i,j,2]<255):
@@ -237,9 +240,9 @@ class project:
 
         elif(arg==2):
             #Algorithm_2
-            E = self.part_2()
+            E = self.part_2_init()
             F, a_1, a_2 = self.conversion()
-            rows_1, columns_1, channels =F[0].shape
+            rows_1, columns_1, channels = F[0].shape
             #F = self.conversion()
             for i in range(rows_1):
                 for j in range(columns_1):
@@ -256,26 +259,27 @@ class project:
 
         elif(arg==3):
             #pdb.set_trace()
-            #Algorithm_3
+            # Algorithm_3
             L = self.part_2_init()
             M, a_1, a_2 = self.conversion()
             rows_2, columns_2, channels = M[0].shape
-            #eta calulation
+            # eta calulation
             exp_time = 1.0/1000.0
-            stage_1 =1/ (exp_time + exp_time/(a_1**(2)) + exp_time/(a_2**(2)))
-            stage_2 =1/ (exp_time + exp_time/(a_1**(2)))
+            stage_1 = 1/ (exp_time + exp_time/(a_1**(2)) + exp_time/(a_2**(2)))
+            stage_2 = 1/ (exp_time + exp_time/(a_1**(2)))
             F = self.conversion()
-            #averaging
+            # averaging
             for i in range(rows_2):
                 for j in range(columns_2):
                     if(L[2][i,j,0]<255 and L[2][i,j,1]<255 and L[2][i,j,2]<255):
                         M[0][i,j,0] = (stage_1*exp_time*M[0][i,j,0]+ stage_1*exp_time*M[1][i,j,0]/(a_1**(2)) + stage_2*exp_time*M[2][i,j,0]/(a_2**(2)))/3
                         M[0][i,j,1] = (stage_1*exp_time*M[0][i,j,1]+ stage_1*exp_time*M[1][i,j,1]/(a_1**(2)) + stage_2*exp_time*M[2][i,j,1]/(a_2**(2)))/3
                         M[0][i,j,2] = (stage_1*exp_time*M[0][i,j,2]+ stage_1*exp_time*M[1][i,j,2]/(a_1**(2)) + stage_2*exp_time*M[2][i,j,2]/(a_2**(2)))/3
-                    elif(L[1][i,j,0]<255 and L[1][i,j,1]<255 and L[2][i,j,2]<255):
+                    elif(L[1][i,j,0]<255 and L[1][i,j,1]<255 and L[1][i,j,2]<255):
                         M[0][i,j,0] = (stage_2*exp_time*M[0][i,j,0]+ stage_2*exp_time*M[1][i,j,0]/(a_1**(2)))/2
                         M[0][i,j,1] = (stage_2*exp_time*M[0][i,j,1]+ stage_2*exp_time*M[1][i,j,1]/(a_1**(2)))/2
                         M[0][i,j,2] = (stage_2*exp_time*M[0][i,j,2]+ stage_2*exp_time*M[1][i,j,2]/(a_1**(2)))/2
+
             return(M[0])
 
     def part_4(self,image):
@@ -287,13 +291,12 @@ class project:
         tonemap1 = cv2.createTonemapDrago(gamma =2.2)
         result = tonemap1.process(image)
 
-        return result
-
+        return(result)
 
 
 def main():
     p = project()
-    algorithm = 1
+    algorithm = input('Enter which algorithm to use (1,2,3)?')
     pic1 = p.part_3(algorithm)
     pic = p.part_4(pic1)
     '''
@@ -304,10 +307,12 @@ def main():
     cv2.namedWindow('image_500', cv2.WINDOW_NORMAL)
     cv2.imshow('image_500', image[1])
     '''
-    cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
-    cv2.imshow('Final_image_2', pic)
-    #cv2.imwrite('Final_image_3', pic)
-    cv2.waitKey(0)
+    plt.imshow(pic)
+    plt.imsave("Final_Image_3.png", pic)
+    #cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
+    #cv2.imshow('Final_image_2', pic)
+    ##cv2.imwrite('Final_image_3', pic)
+    #cv2.waitKey(0)
 
 if __name__ == "__main__":
     main()
