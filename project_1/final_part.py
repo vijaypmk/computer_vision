@@ -198,15 +198,24 @@ class project:
         linearized_B = 10**(linearized_log_B)
 
         # plotting
-        #plt.plot(log_T, linearized_log_B, label ='linearized estimate')
-        #plt.plot(log_T, log_B, label = 'observed brightness')
-        #plt.plot(T, linearized_B**(1/g_inv))
+        choice = input('which plot would you like to view(1,2,3)?')
+        if(choice ==1):
+            plt.plot(log_T, linearized_log_B, label ='linearized estimate')
+            plt.plot(log_T, log_B, label = 'observed brightness')
+            plt.xlabel('Logarithm of Exposure Time')
+            plt.ylabel('Linearized value of logarithm of Brightness, Logarithm of brightness')
+            plt.show()
+        elif(choice==2)
+            plt.plot(T, linearized_B**(1/g_inv))
+            plt.xlabel('Logarithm of Exposure Time')
+            plt.ylabel('Linearized value of Brightness')
+            plt.show()
         #plt.scatter(mean_log_T, mean_log_B))
-        #plt.plot(T, B)
-        plt.xlabel('Logarithm of Exposure Time')
-        plt.ylabel('Linearized value of logarithm of Brightness')
-        #plt.savefig('log_T_vs_linearized_log_B_for_blue_channel')
-        plt.show()
+        elif(choice==3):
+            plt.plot(T, B)
+            plt.xlabel('Exposure Time')
+            plt.ylabel('Brightness')
+            plt.show()
 
     def part_3(self, arg):
         '''
@@ -286,18 +295,24 @@ class project:
 
 
 def main():
-    p = project()
-    algorithm = input('Enter which algorithm to use (1,2,3)?')
-    pic1 = p.part_3(algorithm)
-    pic = p.part_4(pic1)
 
-    # plotting
-    #plt.imshow(pic)
-    pic = np.uint8(pic*255)
-    cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
-    cv2.imshow('Final_image_2', pic)
-    cv2.imwrite('Final_image_3.jpg', pic)
-    cv2.waitKey(0)
+    p = project()
+    part = input('Enter which part you want to see(1 or 4)?')
+
+    if(part==4):
+        algorithm = input('Enter which algorithm to use (1,2,3)?')
+        pic1 = p.part_3(algorithm)
+        pic = p.part_4(pic1)
+        pic = np.uint8(pic*255)
+        cv2.namedWindow('Final_image', cv2.WINDOW_NORMAL)
+        cv2.imshow('Final_image', pic)
+        cv2.imwrite('Final_image.jpg', pic)
+        cv2.waitKey(0)
+
+
+    elif(part==1):
+        channel = input('Enter the color channel(0,1,2)?')
+        p.part_1(channel)
 
 if __name__ == "__main__":
     main()

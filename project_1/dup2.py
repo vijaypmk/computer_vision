@@ -323,26 +323,41 @@ class project:
 
 def main():
     p = project()
-    algorithm = input('Enter which algorithm to use (1,2,3)?')
-    pic1 = p.part_3(algorithm)
-    pic = p.part_4(pic1)
+    part = input('Enter which part you want to see(1 or 4)?')
+
+    if(part==4):
+        algorithm = input('Enter which algorithm to use (1,2,3)?')
+        pic1 = p.part_3(algorithm)
+        pic = p.part_4(pic1)
+        pic = np.uint8(pic*255)
+        cv2.namedWindow('Final_image', cv2.WINDOW_NORMAL)
+        cv2.imshow('Final_image', pic)
+        cv2.imwrite('Final_image.jpg', pic)
+        cv2.waitKey(0)
+
+
+    elif(part==1):
+        channel = input('Enter the color channel(0,1,2)?')
+        p.part_1(channel)
+
     '''
     cv2.namedWindow('Final_Image_1', cv2.WINDOW_NORMAL)
     cv2.imshow('Final_Image_1', image[0])
     cv2.namedWindow('image_250', cv2.WINDOW_NORMAL)
+    c = np.uint8(pic*255)
     cv2.imshow('image_250', image[2])
     cv2.namedWindow('image_500', cv2.WINDOW_NORMAL)
     cv2.imshow('image_500', image[1])
     '''
     #plt.imshow(pic)
     #plt.imsave("Final_Image_3.png", pic)
-    pic = np.uint8(pic*255)
+    #pic = np.uint8(pic*255)
     #pic.convertTo(pic, CV_8UC3, 255.0);
     #pic = math.ceil(pic)
-    cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
-    cv2.imshow('Final_image_2', pic)
-    cv2.imwrite('Final_image_3.jpg', pic)
-    cv2.waitKey(0)
+    #cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
+    #cv2.imshow('Final_image_2', pic)
+    #cv2.imwrite('Final_image_3.jpg', pic)
+    #cv2.waitKey(0)
 
 if __name__ == "__main__":
     main()
