@@ -286,18 +286,24 @@ class project:
 
 
 def main():
-    p = project()
-    algorithm = input('Enter which algorithm to use (1,2,3)?')
-    pic1 = p.part_3(algorithm)
-    pic = p.part_4(pic1)
 
-    # plotting
-    #plt.imshow(pic)
-    pic = np.uint8(pic*255)
-    cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
-    cv2.imshow('Final_image_2', pic)
-    cv2.imwrite('Final_image_3.jpg', pic)
-    cv2.waitKey(0)
+    p = project()
+    part = input('Enter which part you want to see(1 or 4)?')
+
+    if(part==4):
+        algorithm = input('Enter which algorithm to use (1,2,3)?')
+        pic1 = p.part_3(algorithm)
+        pic = p.part_4(pic1)
+        pic = np.uint8(pic*255)
+        cv2.namedWindow('Final_image', cv2.WINDOW_NORMAL)
+        cv2.imshow('Final_image', pic)
+        cv2.imwrite('Final_image.jpg', pic)
+        cv2.waitKey(0)
+
+
+    elif(part==1):
+        channel = input('Enter the color channel(0,1,2)?')
+        p.part_1(channel)
 
 if __name__ == "__main__":
     main()
