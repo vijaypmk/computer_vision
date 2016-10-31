@@ -4,6 +4,7 @@ import pdb
 from matplotlib import pyplot as plt
 import pdb
 import click
+import math
 
 class project:
 
@@ -111,9 +112,9 @@ class project:
         mean_log_avg = (np.sum(log_avg))/float(len(log_avg))
         mean_log_time = (np.sum(log_time))/float(len(log_time))
         linearized_log_avg , g1_inv = self.linear_regression(log_time, log_avg, mean_log_time, mean_log_avg)
-        C[0][:,:, color_channel] = C[0][:,:,color_channel]**(1.0/g1_inv)
-        C[1][:,:, color_channel] = C[1][:,:,color_channel]**(1.0/g1_inv)
-        C[2][:,:, color_channel] = C[2][:,:,color_channel]**(1.0/g1_inv)
+        C[0][:,:, color_channel] = (C[0][:,:,color_channel]/255)**(1/g1_inv)
+        C[1][:,:, color_channel] = (C[1][:,:,color_channel]/255)**(1/g1_inv)
+        C[2][:,:, color_channel] = (C[2][:,:,color_channel]/255)**(1/g1_inv)
 
         return(C)
 
@@ -146,6 +147,7 @@ class project:
 
         a_1 =2
         a_2 =4
+        C = self.part_2_init()
         for i in range(3):
             C[i] = np.float32(C[i])
         #for i in range(3):
@@ -157,31 +159,36 @@ class project:
         #C[1][:,:,:] = C[1][:,:,:]/a_1
         #C[2][:,:,:] = C[2][:,:,:]/a_2
 
-        C = self.linearize_image(C, 2)
-        C = self.linearize_image(C, 1)
+        # (arguments are stack and color)
         C = self.linearize_image(C, 0)
+        C = self.linearize_image(C, 1)
+        C = self.linearize_image(C, 2)
 
-        C[1][:,:,:] = C[1][:,:,:]/a_1
-        C[2][:,:,:] = C[2][:,:,:]/a_2
+#        C[1][:,:,:] = C[1][:,:,:]/a_1
+#        C[2][:,:,:] = C[2][:,:,:]/a_2
+
+        for i in range(3):
+            C[1][:,:,i] = C[1][:,:,i]/a_1
+            C[2][:,:,i] = C[2][:,:,i]/a_2
 
         #C, a_1, a_1 = self.conversion()
 
         return(C, a_1, a_2)
 
-    def conversion(self):
-        '''
-        Converts the image stack to a floating point data type
-        Arguements: None
-        Return: Image Array
-        '''
-        D = self.part_2_init()
-        a_1 = 2
-        a_2 = 4
-        for i in range(3):
-            D[i] = np.float32(D[i])
-        D[1][:,:,:] = D[1][:,:,:]/a_1
-        D[2][:,:,:] = D[2][:,:,:]/a_2
-        return (D, a_1, a_2)
+    #def conversion(self):
+    #    '''
+    #    Converts the image stack to a floating point data type
+    #    Arguements: None
+    #    Return: Image Array
+    #    '''
+    #    D = self.part_2_init()
+    #    a_1 = 2
+    #    a_2 = 4
+    #    for i in range(3):
+    #        D[i] = np.float32(D[i])
+    #    D[1][:,:,:] = D[1][:,:,:]/a_1
+    #    D[2][:,:,:] = D[2][:,:,:]/a_2
+    #    return (D, a_1, a_2)
 
     def linear_regression(self, x, y, x_bar, y_bar):
         '''
@@ -240,21 +247,25 @@ class project:
         Arguements: None
         Return: Image
         '''
-        if(arg ==1):
+        if(arg == 1):
             #Algorithm_1
+            G = self.part_2_init()
             D, a_1, a_2 = self.part_2()
-            G = self.part_2()
             rows, columns, channels = D[0].shape
             for i in range(rows):
                 for j in range(columns):
                     if(G[2][i,j,0]<255 and G[2][i,j,1]<255 and G[2][i,j,2]<255):
-                        D[0][i,j,:] = D[2][i,j,:]
+                        D[0][i,j,0] = D[2][i,j,0]
+                        D[0][i,j,1] = D[2][i,j,1]
+                        D[0][i,j,2] = D[2][i,j,2]
                     elif(G[1][i,j,0]<255 and G[1][i,j,1]<255 and G[1][i,j,2]<255):
-                        D[0][i,j,:] = D[1][i,j,:]
+                        D[0][i,j,0] = D[1][i,j,0]
+                        D[0][i,j,1] = D[1][i,j,1]
+                        D[0][i,j,2] = D[1][i,j,2]
 
             return(D[0])
 
-        elif(arg==2):
+        elif(arg == 2):
             #Algorithm_2
             E = self.part_2_init()
             F, a_1, a_2 = self.part_2()
@@ -283,7 +294,7 @@ class project:
             exp_time = 1.0/1000.0
             stage_1 = 1/ (exp_time + exp_time/(a_1**(2)) + exp_time/(a_2**(2)))
             stage_2 = 1/ (exp_time + exp_time/(a_1**(2)))
-            F = self.conversion()
+            #F = self.conversion()
             # averaging
             for i in range(rows_2):
                 for j in range(columns_2):
@@ -323,12 +334,15 @@ def main():
     cv2.namedWindow('image_500', cv2.WINDOW_NORMAL)
     cv2.imshow('image_500', image[1])
     '''
-    plt.imshow(pic)
-    plt.imsave("Final_Image_3.png", pic)
-    #cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
-    #cv2.imshow('Final_image_2', pic)
-    ##cv2.imwrite('Final_image_3', pic)
-    #cv2.waitKey(0)
+    #plt.imshow(pic)
+    #plt.imsave("Final_Image_3.png", pic)
+    pic = np.uint8(pic*255)
+    #pic.convertTo(pic, CV_8UC3, 255.0);
+    #pic = math.ceil(pic)
+    cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
+    cv2.imshow('Final_image_2', pic)
+    cv2.imwrite('Final_image_3.jpg', pic)
+    cv2.waitKey(0)
 
 if __name__ == "__main__":
     main()
