@@ -205,9 +205,9 @@ class project:
             plt.xlabel('Logarithm of Exposure Time')
             plt.ylabel('Linearized value of logarithm of Brightness, Logarithm of brightness')
             plt.show()
-        elif(choice==2)
+        elif(choice==2):
             plt.plot(T, linearized_B**(1/g_inv))
-            plt.xlabel('Logarithm of Exposure Time')
+            plt.xlabel('Exposure Time')
             plt.ylabel('Linearized value of Brightness')
             plt.show()
         #plt.scatter(mean_log_T, mean_log_B))
@@ -308,7 +308,6 @@ def main():
         cv2.imshow('Final_image', pic)
         cv2.imwrite('Final_image.jpg', pic)
         cv2.waitKey(0)
-
 
     elif(part==1):
         channel = input('Enter the color channel(0,1,2)?')
