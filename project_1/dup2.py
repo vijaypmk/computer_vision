@@ -111,7 +111,9 @@ class project:
         mean_log_avg = (np.sum(log_avg))/float(len(log_avg))
         mean_log_time = (np.sum(log_time))/float(len(log_time))
         linearized_log_avg , g1_inv = self.linear_regression(log_time, log_avg, mean_log_time, mean_log_avg)
-        C[:][:,:, color_channel] = C[:][:,:,color_channel]**(1.0/g1_inv)
+        C[0][:,:, color_channel] = C[0][:,:,color_channel]**(1.0/g1_inv)
+        C[1][:,:, color_channel] = C[1][:,:,color_channel]**(1.0/g1_inv)
+        C[2][:,:, color_channel] = C[2][:,:,color_channel]**(1.0/g1_inv)
 
         return(C)
 
@@ -141,16 +143,17 @@ class project:
         Arguements: None
         Return: Image Array
         '''
-        for i in range(3):
-            C[i] = np.float32(C[i])
+        #for i in range(3):
+        #    C[i] = np.float32(C[i])
+        #C = self.part_2_init()
+
+        a_1, a_2 = self.conversion(C)
 
         C = self.linearize_image(C, 2)
         C = self.linearize_image(C, 1)
         C = self.linearize_image(C, 0)
 
-        C, a_1, a_1 = self.conversion()
-
-        return(C)
+        return(C, a_1, a_2)
 
     def conversion(self):
         '''
@@ -261,7 +264,7 @@ class project:
             #pdb.set_trace()
             # Algorithm_3
             L = self.part_2_init()
-            M, a_1, a_2 = self.conversion()
+            M, a_1, a_2 = self.part_2()
             rows_2, columns_2, channels = M[0].shape
             # eta calulation
             exp_time = 1.0/1000.0
