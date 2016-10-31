@@ -143,15 +143,28 @@ class project:
         Arguements: None
         Return: Image Array
         '''
+
+        a_1 =2
+        a_2 =4
+        for i in range(3):
+            C[i] = np.float32(C[i])
         #for i in range(3):
         #    C[i] = np.float32(C[i])
         #C = self.part_2_init()
 
-        a_1, a_2 = self.conversion(C)
+        #a_1, a_2 = self.conversion(C)
+
+        #C[1][:,:,:] = C[1][:,:,:]/a_1
+        #C[2][:,:,:] = C[2][:,:,:]/a_2
 
         C = self.linearize_image(C, 2)
         C = self.linearize_image(C, 1)
         C = self.linearize_image(C, 0)
+
+        C[1][:,:,:] = C[1][:,:,:]/a_1
+        C[2][:,:,:] = C[2][:,:,:]/a_2
+
+        #C, a_1, a_1 = self.conversion()
 
         return(C, a_1, a_2)
 
@@ -229,8 +242,8 @@ class project:
         '''
         if(arg ==1):
             #Algorithm_1
-            D, a_1, a_2 = self.conversion()
-            G = self.part_2_init()
+            D, a_1, a_2 = self.part_2()
+            G = self.part_2()
             rows, columns, channels = D[0].shape
             for i in range(rows):
                 for j in range(columns):
@@ -244,7 +257,7 @@ class project:
         elif(arg==2):
             #Algorithm_2
             E = self.part_2_init()
-            F, a_1, a_2 = self.conversion()
+            F, a_1, a_2 = self.part_2()
             rows_1, columns_1, channels = F[0].shape
             #F = self.conversion()
             for i in range(rows_1):
