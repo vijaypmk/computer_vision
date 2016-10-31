@@ -93,22 +93,29 @@ class project:
 
         return(B, T, log_B, log_T, mean_log_B, mean_log_T)
 
-    def linearize_image(image, color_channel)
+    #Global image array to linearize
+    #C = self.part_2_init()
+
+    def linearize_image(self,C,  color_channel):
         '''
         Stores the computed value in the image
-        Arguements: Image
+        Arguements: Color channel
         Return: Image
         '''
-        B = self.part_2.init()
-        avg = [self.img_avg(B[0], color_channel), self.img_avg(B[1], color_channel), self.img_avg(B[2], color_channel)]
-        time = [1/1000, 1/500, 1/250]
-        log_avg = np.log(avg)
-        log_time = np.log(time)
+        avg = [self.img_avg(C[0], color_channel), self.img_avg(C[1], color_channel), self.img_avg(C[2], color_channel)]
+        #C = self.part_2_init()
+        time = [1.0/1000.0, 1.0/500.0, 1.0/250.0]
+        log_avg = np.log10(avg)
+        log_time = np.log10(time)
         mean_log_avg = (np.sum(log_avg))/float(len(log_avg))
         mean_log_time = (np.sum(log_time))/float(len(log_time))
+        linearized_log_avg , g1_inv = self.linear_regression(log_time, log_avg, mean_log_time, mean_log_avg)
+        C[0][:,:, color_channel] = C[0][:,:, color_channel]**(1/g1_inv)
+        C[1][:,:, color_channel] = C[1][:,:, color_channel]**(1/g1_inv)
+        C[2][:,:, color_channel] = C[2][:,:, color_channel]**(1/g1_inv)
+        return(C)
 
-
-    def part_2_init(self, color_channel):
+    def part_2_init(self):
         '''
         Reads the different images
         Arguements: None
@@ -127,17 +134,37 @@ class project:
 
         return B
 
+
     def part_2(self):
         '''
         Performslinearization
         Arguements: None
         Return: Image Array
         '''
-        B = self.part_2_init()
+        C = self.part_2_init()
+        C1 = self.linearize_image(C, 2)
+        C2 = self.linearize_image(C1, 1)
+        C3 = self.linearize_image(C2, 0)
+        D = self.part_2_init()
+        return(C)
 
-        print(B[1][10,10,1])
-
-        return(B[1][10,10,1])
+    def conversion(self):
+        '''
+        Converts the image stack to a floating point data type
+        Arguements: None
+        Return: Image Array
+        '''
+        D = self.part_2_init()
+        for i in range(len(D)):
+            rows, columns, channel =D[i].shape
+            for j in range(rows):
+                for k in range(columns):
+                    D[i][j,k,0] = float(D[i][j,k,0])
+                    D[i][j,k,1] = float(D[i][j,k,1])
+                    D[i][j,k,2] = float(D[i][j,k,2])
+        #D[1][:,:,:] = D[1][:,:,:]/2
+        #D[2][:,:,:] = D[2][:,:,:]/4
+        return D
 
     def linear_regression(self, x, y, x_bar, y_bar):
         '''
@@ -182,19 +209,73 @@ class project:
     # plotting
         #plt.plot(log_T, linearized_log_B, label ='linearized estimate')
         #plt.plot(log_T, log_B, label = 'observed brightness')
-        plt.plot(T, linearized_B**(1/g_inv))
+        #plt.plot(T, linearized_B**(1/g_inv))
         #plt.scatter(mean_log_T, mean_log_B))
         #plt.plot(T, B)
         plt.xlabel('Logarithm of Exposure Time')
         plt.ylabel('Linearized value of logarithm of Brightness')
-        plt.savefig('log_T_vs_linearized_log_B_for_blue_channel')
+        #plt.savefig('log_T_vs_linearized_log_B_for_blue_channel')
         plt.show()
 
         return
 
+    def part_3(self):
+        '''
+        Creates a composite image from the image stack
+        Arguements: None
+        Return: Image
+        '''
+        #Algorithm_1
+        D = self.conversion()
+        rows, columns, channels =D[0].shape
+        for i in range(rows):
+            for j in range(columns):
+                if(D[2][i,j,0]<255 and D[2][i,j,1]<255 and D[2][i,j,2]<255):
+                    D[0][i,j,:] = D[2][i,j,:]
+                elif(D[1][i,j,0]<255 and D[1][i,j,1]<255 and D[1][i,j,2]<255):
+                     D[0][i,j,:] = D[1][i,j,:]
+        #Algorithm_2
+        E = self.conversion()
+        rows_1, columns_1, channels =E[0].shape
+        for i in range(rows):
+            for j in range(columns):
+                if(E[2][i,j,0]<255 and E[2][i,j,1]<255 and E[2][i,j,2]<255):
+                    E[0][i,j,:] = (E[0][i,j,:]+E[1][i,j,:]+E[2][i,j,:])/3
+                elif(E[1][i,j,0]<255 and E[1][i,j,1]<255 and E[2][i,j,2]<255):
+                    E[0][i,j,:] = (E[0][i,j,:]+E[1][i,j,:])/2
+
+        return(D, E)
+
+
+    def part_4(self, image):
+        '''
+        Tonemapping of the HDR composite image
+        Arguements: Image
+        Return: Image
+        '''
+        tonemap1 = cv2.createTonemapDurand(gamma = 2.2)
+        result = tonemap1.process(image)
+
+        return result
+
 def main():
     p = project()
-    p.part_1(1)
+    image, pic = p.part_3()
+    img = p.part_2_init()
+    cv2.namedWindow('Final_Image_1', cv2.WINDOW_NORMAL)
+    cv2.imshow('Final_Image_1', image[0])
+    cv2.namedWindow('image_250', cv2.WINDOW_NORMAL)
+    cv2.imshow('image_250', image[2])
+    cv2.namedWindow('image_500', cv2.WINDOW_NORMAL)
+    cv2.imshow('image_500', image[1])
+    cv2.namedWindow('original_image', cv2.WINDOW_NORMAL)
+    cv2.imshow('original_image', img[0])
+    cv2.namedWindow('Final_image_2', cv2.WINDOW_NORMAL)
+    cv2.imshow('Final_image_2', pic[0])
+    after_map = p.part_4(image[0])
+    cv2.namedWindow('tonemapped', cv2.WINDOW_NORMAL)
+    cv2.imshow('tonemapped', after_map)
+    cv2.waitKey(0)
 
 if __name__ == "__main__":
     main()
